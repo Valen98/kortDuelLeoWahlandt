@@ -4,7 +4,7 @@
 using namespace std;
 
 int cardRandomizer(int Values[52]) {
-    return  Values[1+ (rand() % 51)];
+    return  Values[rand() % 51];
 }
 
 string suitCalculator(int suitNumber) {
@@ -33,15 +33,14 @@ int inputBalance() {
         cin.clear();
         cin.ignore(1000, '\n');
     }
-
     return playerBalance;
 };
 
-int betting(int* playerBalance) {
-    //playerBalance is pointing to main{ playerBalance} Which means it uses same variable and dont need to return a new balance.
+int betting(int* pointerPlayerBalance) {
+    //playerBalance is pointing to main{ playerBalance} Which means it uses the same variable and dont need to return a new balance.
     int bet{};
     bool bettingBoolean = true;
-    cout << "How much do you want to bet?" << endl << "1. 100 kr" << endl << "2. 300 kr" << endl << "3. 500 kr?" << endl;;
+    cout << "How much do you want to bet?" << endl << "1. 100 kr" << endl << "2. 300 kr" << endl << "3. 500 kr?" << endl;
     while (bettingBoolean) {
 
         while (!(cin >> bet) || cin.peek() != '\n') {
@@ -50,21 +49,21 @@ int betting(int* playerBalance) {
             cin.ignore(1000, '\n');
         }
         // This if checks how much the bet will be and if  the user has enough Balance. 
-        if (bet == 1 && *playerBalance >= 100) {
+        if (bet == 1 && *pointerPlayerBalance >= 100) {
             bet = 100;
-            *playerBalance -= bet;
+            *pointerPlayerBalance -= bet;
             cout << "You bet " << bet << " kr " << endl;
             bettingBoolean = false;
         }
-        else if (bet == 2 && *playerBalance >= 300) {
+        else if (bet == 2 && *pointerPlayerBalance >= 300) {
             bet = 300;
-            *playerBalance -= bet;
+            *pointerPlayerBalance -= bet;
             cout << "You bet " << bet << " kr " << endl;
             bettingBoolean = false;
         }
-        else if (bet == 3 && *playerBalance >= 500) {
+        else if (bet == 3 && *pointerPlayerBalance >= 500) {
             bet = 500;
-            *playerBalance -= bet;
+            *pointerPlayerBalance -= bet;
             cout << "You bet " << bet << " kr " << endl;
             bettingBoolean = false;
         }
@@ -91,8 +90,6 @@ int main(){
     int computerScore = 0;
     int totalWinnings = 0;
 
-    //test  
-
     string playerCardSuit;
     string computerCardSuit;
     string addYesNo;
@@ -116,9 +113,11 @@ int main(){
 
         while (gameLoop) {
             
+            //The player gets a card  and with that card number the suitCalculator(card) sets the suit of the card.
             playerCard = cardRandomizer(cardValues);
             playerCardSuit = suitCalculator(playerCard);
-
+           
+            //The computer gets a card  and with that card number the suitCalculator(card) sets the suit of the card.
             computerCard = cardRandomizer(cardValues);
             computerCardSuit = suitCalculator(computerCard);
 
@@ -129,7 +128,7 @@ int main(){
                 cout << computerCard << endl;
             }
 
-            //This convert the high numbercard to the correct card. If the user pulls 14 its actually an A Heart.
+            //This convert the high numbercard to the correct card. If the user pulls 14 its actually 1 Heart.
             playerCardResult = 1 + (playerCard % 13);
             computerCardResult = 1 + (computerCard % 13);
             cout << "----------------Your turn----------------" << endl;
@@ -146,15 +145,17 @@ int main(){
             
             cout << "-------------Comparing-----------------" << endl;
 
+            //The if checks if the player card is better in modulo of 13 (ex. 20 % 13 = 7)
             if (playerCardResult > computerCardResult) {
                 cout << "Player card " << playerCardResult << " " << playerCardSuit <<  " is better than computer card " << computerCardResult << " " << computerCardSuit << endl;
                 playerScore++;
-            }
+            } //If the playercard is lower than computer = computer wins.
             else if (playerCardResult < computerCardResult) {
                 cout << "Computer card " << computerCardResult << " " << computerCardSuit << " is better than player card " << playerCardResult << " " << playerCardSuit << endl;
                 computerScore++;
             }
             else {
+                //The value of the card are the same (modulo 13) and now checks the suit.
                     cout << "The value of the cards are the same. Now check suit.\nThe result: Player " << playerCardResult << " " << playerCardSuit << "\nComputers card " << computerCardResult << " " << computerCardSuit << endl;
                 
                     //If the value of the card is low it means that the suit of the card is better. Look at the suitCalculator function.
@@ -180,8 +181,10 @@ int main(){
                 break;
             }
         }
+            //This IF checks if the player want to continue playing or quit the game
             cout << "Do you wanna play again (y)?" << endl; cin >> rematch;
             if (rematch == "Y" || rematch == "y") {
+                //If the user has less than 100 kr which is the least bet possible, want to add more money.
                 if (playerBalance < 100) {
                     cout << "You have not enough money to bet. Do you wanna add more? Yes(Y) or No(N)";
                     cin >> addYesNo;
